@@ -3,3 +3,4 @@ node-modules
 .env
 node_modules/
 node_modules/
+.gitignore
