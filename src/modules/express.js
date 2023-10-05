@@ -7,6 +7,14 @@ const app = express();
 
 app.use(express.json()); //vamos sempre usar json no corpo das requisiçoes, tanto post qaunto get
 
+//middleware: app.use(), recebe uma funçao que é executada antes de cada requisiçao
+app.use((req,res,next) => {
+    console.log("Tipo de request: " + req.method);
+    console.log("Tipo de conteudo: " + req.headers["content-type"]);
+    console.log("Data: " + new Date());
+    next();
+})
+
 //create user
 //setando resposta da requisiçao post user
 //assincrona pois UserModel.create retorna promise
