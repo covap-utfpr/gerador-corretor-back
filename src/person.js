@@ -1,15 +1,15 @@
-//construindo modulo
 class Person {
+
     constructor(name) {
         this.name = name;
     }
 
     sayMyName() {
-        return `Hello, my name is ${this.name}`;
+        return `My name is ${this.name}`;
     }
 }
 
-//exportando modulo criado
+//exportando objeto com a classe
 module.exports = {
     Person,
-};
+}
