@@ -1,6 +1,7 @@
 //Deinindo Endpoints - crud no Drive
 
 const express = require("express");
+const fs = require('fs');
 const {google} = require('googleapis');
 
 const app = express();
@@ -11,7 +12,7 @@ const oauth2Client = new google.auth.OAuth2(
     process.env.REDIRECT_URL
 );
 
-
+let diretorioDriveId;
 
 app.get("/", (req, res) => {
 
@@ -59,31 +60,9 @@ app.get("/autenticar", async (req,res) => {
 app.get("/pastas", async (req, res) => {
 
     try {
-        const drive = google.drive({ version:'v3', auth:oauth2Client });
-
-        const response = await drive.files.create({
-
-            resource: {
-                name: "Banco Gerador",
-                mimeType: 'application/vnd.google-apps.folder', 
-            },
-            fields: 'id', 
-        });
-
-        const novaPasta = response.data;
-
-        res.status(200).send(novaPasta.id);
-
-    } catch (erro) {
-
-        res.status(500).send("Erro ao criar subpasta: " + erro.message);
-    }
-
-});
-
-app.get("/pastas", async (req, res) => {
-
-    try {
+        if (diretorioDriveId) {
+            throw new Error("Diretorio ja existe no drive!");
+        }
         const drive = google.drive({ version:'v3', auth:oauth2Client });
 
         const response = await drive.files.create({
@@ -97,6 +76,8 @@ app.get("/pastas", async (req, res) => {
 
         const novaPasta = response.data;
 
+        diretorioDriveId = novaPasta.id;
+
         res.status(200).send(novaPasta.id);
 
     } catch (erro) {
@@ -105,6 +86,52 @@ app.get("/pastas", async (req, res) => {
     }
 
 });
+
+app.get("/criar-questao", async (req, res) => {
+
+    try {
+
+        const nomeArquivo = "questao1.json";
+
+        fs.writeFileSync(nomeArquivo, JSON.stringify(
+            {
+               nome: "questao1",
+               enunciado: "hduoh2i32hdip2jd23", 
+            }
+        ));
+
+        const drive = google.drive({ version:'v3', auth:oauth2Client });
+
+        const response = await drive.files.create({
+
+            resource: {
+                name: nomeArquivo,
+                parents: diretorioDriveId, // Define a pasta pai onde o arquivo será criado
+            },
+            media: {
+                mimeType: 'application/json',
+                body: fs.createReadStream(nomeArquivo), // Lê o arquivo local
+            },
+            fields: 'id', // Solicita apenas o ID do novo arquivo
+        });
+
+        const novoArquivo = response.data;
+        
+        console.log(`Arquivo '${nomeArquivo}' criado com sucesso no Google Drive. ID: ${novoArquivo.id}`);
+    
+        // Exclua o arquivo local após o upload bem-sucedido
+        fs.unlinkSync(nomeArquivo);
+
+        res.status(200).send(novoArquivo.id);
+
+    } catch (erro) {
+
+        res.status(500).send("Erro ao criar arquivo: " + erro.message);
+    }
+
+});
+
+
 
 const port = 8080;
 
