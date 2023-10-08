@@ -21,6 +21,8 @@ const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
 //aplicando o middleware em TODAS as rotas da aplicaçao
 app.use(middlewareAutenticacao);
 
+//setando analise de requisiçoes padra Json
+
 app.get("/", (req, res) => {
 
     res.send("Home");

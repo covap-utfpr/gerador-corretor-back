@@ -1,5 +1,3 @@
-const Enunciado = require("./Enunciado");
-
 class Questao {
     
     constructor(id, nome, enunciado, imagem) {
