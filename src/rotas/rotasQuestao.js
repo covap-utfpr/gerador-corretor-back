@@ -6,7 +6,9 @@ const Questao = require("../modelos/Questao");
 const router = express.Router();
 const drive = google.drive('v3');
 
-router.post("/criar", async (req, res) => {
+router.use(express.json()); //setando analise de requisiçoes padra Json
+
+router.get("/criar", async (req, res) => {
 
     try {
 
@@ -20,7 +22,7 @@ router.post("/criar", async (req, res) => {
 
             resource: {
                 name: questao.id, // Define o nome do arquivo
-                // Define o id da pasta pai onde o arquivo será criado
+                //id: // Define o id da pasta pai onde o arquivo será criado
             },
 
             media: {

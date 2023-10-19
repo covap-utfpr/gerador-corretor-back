@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 dotenv.config(); //importando variaveis de ambiente (.env)
 
@@ -15,19 +17,23 @@ app.use(session({
     saveUninitialized: true,
 }));
 
+//analisar cookies enviados pelo navegador nas solicitações
+//app.use(cookieParser());
+
+//Configurando o CORS para permitir solicitações do front
+app.use(cors());
+
 //importando middleware de autenticaçao
 const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
 
 //aplicando o middleware em TODAS as rotas da aplicaçao
 app.use(middlewareAutenticacao);
 
-//setando analise de requisiçoes padra Json
 
-app.get("/", (req, res) => {
-
+app.get("/home", (req, res) => {
     res.send("Home");
-})
-
+});
+ 
 //importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
 const rotasAutenticacao = require("./rotas/rotasAutenticacao");
 const rotasDiretorio = require("./rotas/rotasDiretorio");
@@ -39,7 +45,6 @@ app.use("/", rotasAutenticacao);
 app.use("/diretorio", rotasDiretorio);
 // app.use("/atividade", rotasAtividade);
 app.use("/questao", rotasQuestao);
-
 //incializando servidor
 app.listen(process.env.PORT, () => {console.log(`Rodando na porta ${process.env.PORT}`)});
 

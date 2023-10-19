@@ -14,21 +14,23 @@ router.get("/login", (req, res) => {
 
     try {
 
+        //definindo escopo de acesso ao drive
         const scopes = [
             'https://www.googleapis.com/auth/drive.file'
         ];
-    
+        
+        //criar url de dominio do google para o usuario realizar login
         const authorizationUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: scopes,
             include_granted_scopes: true
         });
-
-        res.redirect(authorizationUrl);
+        
+        res.status(200).send(authorizationUrl);
 
     } catch(erro) {
 
-        console.error("Erro de redirecionamento: " + erro.message);
+        req.status(400).send("Erro de redirecionamento: " + erro.message);
     }
 
 });
@@ -37,23 +39,28 @@ router.get("/login/callback", async (req,res) => {
 
     try {
 
+        // apos realizar login com google, usuario retorna para esta url que tem 
+        //parametros fornecidos pelo google
         if (!oauth2Client) {
             throw new Error("Cliente oAuth nao foi gerado.");
         }
 
         const code = req.query.code;
 
+        //extraindo token dos parametros enviados
         const { tokens } = await oauth2Client.getToken(code);
-      
+        
+        //atulizando credenciais de usuario
         oauth2Client.setCredentials(tokens);
 
+        // objeto oauth2Client como parametro de autenticaçao padrao da biblioteca google em todos arquivos
         google.options({
             auth: oauth2Client
         })
 
         req.session.autenticado = true;
 
-        res.redirect("/");
+        res.redirect("/home");
     
     } catch (erro) {
 
