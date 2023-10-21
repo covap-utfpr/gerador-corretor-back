@@ -13,6 +13,7 @@ router.post("/criar", async (req, res) => {
     try {
         //monta objeto questao
         const questao = new Questao("1", req.body.titulo, req.body.enunciado, req.body.imagem);
+        console.log(req.body.diretorio);
 
         //cria arquivo com o id correspondente
         fs.writeFileSync(questao.id, JSON.stringify(questao));
@@ -21,7 +22,7 @@ router.post("/criar", async (req, res) => {
 
             resource: {
                 name: questao.id, // Define o nome do arquivo
-                //id: // Define o id da pasta pai onde o arquivo será criado
+                parents: [req.body.diretorio]
             },
 
             media: {

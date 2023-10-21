@@ -8,14 +8,14 @@ const drive = google.drive('v3');
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
 // rota para criar um novo diretorio
-router.get("/criar", async (req, res) => {
+router.post("/criar", async (req, res) => {
 
     try {
-        
+
         const response = await drive.files.create({
 
             resource: {
-                name: "DIRETORIO-GERADOR",
+                name: req.body.nome,
                 mimeType: 'application/vnd.google-apps.folder', 
             },
             fields: 'id', 
