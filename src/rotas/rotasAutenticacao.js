@@ -58,8 +58,6 @@ router.get("/login/callback", async (req,res) => {
             auth: oauth2Client
         })
 
-        req.session.autenticado = true;
-
         res.cookie("token", tokens);  
         res.status(200).redirect(process.env.FRONT_URL);
 

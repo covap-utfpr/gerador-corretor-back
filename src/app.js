@@ -1,21 +1,11 @@
 const dotenv = require("dotenv");
 const express = require("express");
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 dotenv.config(); //importando variaveis de ambiente (.env)
 
 const app = express(); //inciando app express
-
-// inicializando express-session
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    //sessoes nao modificadas nao sao salvas
-    resave: false,
-    //sessoes nao incializadas podem ser salvas
-    saveUninitialized: true,
-}));
 
 //analisar cookies enviados pelo navegador nas solicitações
 app.use(cookieParser());
@@ -26,8 +16,11 @@ app.use(cors());
 //importando middleware de autenticaçao
 const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
 
+//lendo todas requisiçoes como json, necessario para middleware de autenticaçao
+app.use(express.json());
+
 //aplicando o middleware em TODAS as rotas da aplicaçao
-//app.use(middlewareAutenticacao);
+app.use(middlewareAutenticacao);
 
 app.get("/home", (req, res) => {
     res.send("Home");
