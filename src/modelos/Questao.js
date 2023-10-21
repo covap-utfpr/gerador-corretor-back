@@ -1,9 +1,9 @@
 class Questao {
     
-    constructor(id, nome, enunciado, imagem) {
+    constructor(id, titulo, enunciado, imagem) {
 
         this.id = id;
-        this.nome = nome;
+        this.titulo = titulo;
         this.enunciado = enunciado;
         this.imagem = imagem;
         this.alternativas = [];

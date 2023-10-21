@@ -50,7 +50,7 @@ router.get("/login/callback", async (req,res) => {
         //extraindo token dos parametros enviados
         const { tokens } = await oauth2Client.getToken(code);
         
-        //atulizando credenciais de usuario
+        //atualizando credenciais de usuario
         oauth2Client.setCredentials(tokens);
 
         // objeto oauth2Client como parametro de autenticaçao padrao da biblioteca google em todos arquivos
@@ -60,8 +60,9 @@ router.get("/login/callback", async (req,res) => {
 
         req.session.autenticado = true;
 
-        res.redirect("/home");
-    
+        res.cookie("token", tokens);  
+        res.status(200).redirect(process.env.FRONT_URL);
+
     } catch (erro) {
 
         res.status(500).send("Erro ao autenticar: " + erro.message);

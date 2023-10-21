@@ -18,7 +18,7 @@ app.use(session({
 }));
 
 //analisar cookies enviados pelo navegador nas solicitações
-//app.use(cookieParser());
+app.use(cookieParser());
 
 //Configurando o CORS para permitir solicitações do front
 app.use(cors());
@@ -27,8 +27,7 @@ app.use(cors());
 const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
 
 //aplicando o middleware em TODAS as rotas da aplicaçao
-app.use(middlewareAutenticacao);
-
+//app.use(middlewareAutenticacao);
 
 app.get("/home", (req, res) => {
     res.send("Home");

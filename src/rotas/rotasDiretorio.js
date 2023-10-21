@@ -32,7 +32,7 @@ router.get("/criar", async (req, res) => {
 
 });
 
-// rota para recuperar diretorio raiz
+// rota para recuperar diretorio 
 router.get("/ler/:nome", async (req, res) => {
 
     try {

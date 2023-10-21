@@ -8,12 +8,11 @@ const drive = google.drive('v3');
 
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
-router.get("/criar", async (req, res) => {
+router.post("/criar", async (req, res) => {
 
     try {
-
         //monta objeto questao
-        const questao = new Questao("1", req.body.nome, req.body.enunciado, req.body.imagem);
+        const questao = new Questao("1", req.body.titulo, req.body.enunciado, req.body.imagem);
 
         //cria arquivo com o id correspondente
         fs.writeFileSync(questao.id, JSON.stringify(questao));
@@ -35,7 +34,7 @@ router.get("/criar", async (req, res) => {
 
         const novoArquivo = response.data; // recupera os dados da resposta
         
-        console.log(`Arquivo '${questao.nome}' criado com sucesso no Google Drive. ID: ${novoArquivo.id}`);
+        console.log(`Arquivo '${questao.titulo}' criado com sucesso no Google Drive. ID: ${novoArquivo.id}`);
     
         // Exclui o arquivo local após o upload bem-sucedido
         fs.unlinkSync(questao.id);
