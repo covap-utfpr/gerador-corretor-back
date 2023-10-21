@@ -1,20 +1,22 @@
 const express = require("express");
-const { google } = require('googleapis');
 const fs = require("fs");
 const Questao = require("../modelos/Questao");
+const middlewareDrive = require('../middleware/middlewareDrive');
+const { google } = require('googleapis');
 
 const router = express.Router();
-const drive = google.drive('v3');
+
+router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
 router.post("/criar", async (req, res) => {
 
     try {
+        const drive = req.drive;
         //monta objeto questao
         const questao = new Questao("1", req.body.titulo, req.body.enunciado, req.body.imagem);
-        console.log(req.body.diretorio);
-
+    
         //cria arquivo com o id correspondente
         fs.writeFileSync(questao.id, JSON.stringify(questao));
 

@@ -1,9 +1,10 @@
 const express = require("express");
+const middlewareDrive = require('../middleware/middlewareDrive');
 const { google } = require('googleapis');
 
 const router = express.Router();
 
-const drive = google.drive('v3');
+router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
@@ -11,6 +12,7 @@ router.use(express.json()); //setando analise de requisiçoes padra Json
 router.post("/criar", async (req, res) => {
 
     try {
+        const drive = req.drive;
 
         const response = await drive.files.create({
 
@@ -20,7 +22,7 @@ router.post("/criar", async (req, res) => {
             },
             fields: 'id', 
         });
-
+       
         const novaPasta = response.data;
 
         res.status(200).send(novaPasta.id);
@@ -36,7 +38,7 @@ router.post("/criar", async (req, res) => {
 router.get("/ler/:nome", async (req, res) => {
 
     try {
-        
+        const drive = req.drive;
         // Obtém o ID da pasta 
         const pasta = await drive.files.list({
             q: `name='${req.params.nome}' and mimeType='application/vnd.google-apps.folder'`,

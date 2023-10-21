@@ -49,14 +49,15 @@ router.get("/login/callback", async (req,res) => {
 
         //extraindo token dos parametros enviados
         const { tokens } = await oauth2Client.getToken(code);
-        
+        console.log("token back: ");
+        console.log(tokens);
         //atualizando credenciais de usuario
-        oauth2Client.setCredentials(tokens);
+        //oauth2Client.setCredentials(tokens);
 
-        // objeto oauth2Client como parametro de autenticaçao padrao da biblioteca google em todos arquivos
-        google.options({
-            auth: oauth2Client
-        })
+        // // objeto oauth2Client como parametro de autenticaçao padrao da biblioteca google em todos arquivos
+        // google.options({
+        //     auth: oauth2Client
+        // })
 
         res.cookie("token", tokens);  
         res.status(200).redirect(process.env.FRONT_URL);
