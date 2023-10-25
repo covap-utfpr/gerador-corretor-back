@@ -38,6 +38,7 @@ router.post("/criar", async (req, res) => {
 router.get("/ler/:nome", async (req, res) => {
 
     try {
+        console.log(req.params.nome);
         const drive = req.drive;
         // Obtém o ID da pasta 
         const pasta = await drive.files.list({
@@ -51,7 +52,6 @@ router.get("/ler/:nome", async (req, res) => {
         }
 
         const pastaId = pasta.data.files[0].id;
-
         res.status(200).send(pastaId);
 
     } catch (erro) {
