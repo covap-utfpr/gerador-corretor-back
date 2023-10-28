@@ -1,6 +1,6 @@
 const Cabecalho = require("./Cabecalho");
 
-class Atividade {
+class Avaliacao {
     
     constructor(id, nome, tipo, titulo, imagem, data, instituicao) {
 
@@ -18,4 +18,4 @@ class Atividade {
     }
 }
 
-module.exports = Atividade;
+module.exports = Avaliacao;
