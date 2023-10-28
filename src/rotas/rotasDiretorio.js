@@ -13,13 +13,15 @@ router.post("/criar", async (req, res) => {
 
     try {
         const drive = req.drive;
-
+        
         const response = await drive.files.create({
 
             resource: {
                 name: req.body.nome,
                 mimeType: 'application/vnd.google-apps.folder', 
+                parents: [req.body.pai]
             },
+
             fields: 'id', 
         });
        
@@ -34,11 +36,11 @@ router.post("/criar", async (req, res) => {
 
 });
 
-// rota para recuperar diretorio 
+// rota para recuperar 1 diretorio 
 router.get("/ler/:nome", async (req, res) => {
 
     try {
-        console.log(req.params.nome);
+
         const drive = req.drive;
         // Obtém o ID da pasta 
         const pasta = await drive.files.list({
