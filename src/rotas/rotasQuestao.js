@@ -2,7 +2,6 @@ const express = require("express");
 const fs = require("fs");
 const Questao = require("../modelos/Questao");
 const middlewareDrive = require('../middleware/middlewareDrive');
-const { google } = require('googleapis');
 
 const router = express.Router();
 
