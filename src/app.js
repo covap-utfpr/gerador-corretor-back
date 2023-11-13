@@ -5,7 +5,7 @@ const cors = require('cors');
 
 dotenv.config(); //importando variaveis de ambiente (.env)
 
-const app = express(); //inciando app express
+const app = express(); //iniciando app express
 
 //analisar cookies enviados pelo navegador nas solicitações
 app.use(cookieParser());
@@ -33,10 +33,10 @@ const rotasDiretorio = require("./rotas/rotasDiretorio");
 const rotasQuestao = require("./rotas/rotasQuestao");
 
 //aplicando as rotas no meu app
-app.use("/", rotasAutenticacao);
-app.use("/diretorio", rotasDiretorio);
+app.use("/", rotasAutenticacao.router);
+app.use("/diretorio", rotasDiretorio.router);
 // app.use("/atividade", rotasAtividade);
-app.use("/questao", rotasQuestao);
+app.use("/questao", rotasQuestao.router);
 //incializando servidor
 app.listen(process.env.PORT, () => {console.log(`Rodando na porta ${process.env.PORT}`)});
 

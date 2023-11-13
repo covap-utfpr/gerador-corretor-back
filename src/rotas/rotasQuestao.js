@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const Questao = require("../modelos/Questao");
 const middlewareDrive = require('../middleware/middlewareDrive');
+const { lerUmDiretorio } = require("./rotasDiretorio");
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
-router.post("/criar", async (req, res) => {
+const criarUmaQuestao = async (req, res) => {
 
     try {
         const drive = req.drive;
@@ -22,7 +23,7 @@ router.post("/criar", async (req, res) => {
         const response = await drive.files.create({
 
             resource: {
-                name: questao.id, // Define o nome do arquivo
+                name: `${questao.id} - ${questao.titulo}`, // Define o nome do arquivo
                 parents: [req.body.diretorio]
             },
 
@@ -35,9 +36,7 @@ router.post("/criar", async (req, res) => {
         });
 
         const novoArquivo = response.data; // recupera os dados da resposta
-        
-        console.log(`Arquivo '${questao.titulo}' criado com sucesso no Google Drive. ID: ${novoArquivo.id}`);
-    
+            
         // Exclui o arquivo local após o upload bem-sucedido
         fs.unlinkSync(questao.id);
 
@@ -48,6 +47,40 @@ router.post("/criar", async (req, res) => {
         res.status(500).send("Erro ao criar arquivo: " + erro.message);
     }
 
-});
+}
 
-module.exports = router;
+const lerVariasQuestoes = async (req, res) => {
+
+    try {
+        const drive = req.drive;
+        // Obtém o ID da pasta 
+        const questoes = await drive.files.list({
+            q: `'${req.query.pai}' in parents and mimeType='application/json' and trashed=false`,
+            fields: 'files(name, id)',
+            orderBy: 'createdTime asc'
+        });
+        
+        if (questoes.data.files.length === 0) {
+            res.status(404).send(`questoes nao encontradas`);
+            return;
+        }
+
+        const questoessNomes = JSON.stringify(questoes.data.files);
+
+        res.status(200).send(questoessNomes);
+
+    } catch (erro) {
+
+        res.status(500).send("Erro ao recuperar pastas: " + erro.message);
+    }
+
+}
+
+router.post("/criar", criarUmaQuestao);
+
+router.get("/ler", lerVariasQuestoes);
+
+module.exports = {
+    router, 
+    criarUmaQuestao
+};

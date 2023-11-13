@@ -10,7 +10,7 @@ const oauth2Client = new google.auth.OAuth2(
     process.env.REDIRECT_URL
 );
 
-router.get("/login", (req, res) => {
+const obterUrlAutorizacao = (req, res) => {
 
     try {
 
@@ -33,9 +33,9 @@ router.get("/login", (req, res) => {
         req.status(400).send("Erro de redirecionamento: " + erro.message);
     }
 
-});
+}
 
-router.get("/login/callback", async (req,res) => {
+const obterCookieToken = async (req,res) => {
 
     try {
 
@@ -57,6 +57,14 @@ router.get("/login/callback", async (req,res) => {
 
         res.status(500).send("Erro ao autenticar: " + erro.message);
     }
-});
+}
 
-module.exports = router;
+router.get("/login", obterUrlAutorizacao);
+
+router.get("/login/callback", obterCookieToken);
+
+module.exports = {
+    router,
+    obterUrlAutorizacao,
+    obterCookieToken
+};
