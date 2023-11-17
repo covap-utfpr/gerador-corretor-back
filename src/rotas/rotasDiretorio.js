@@ -1,45 +1,63 @@
 const express = require("express");
 const middlewareDrive = require('../middleware/middlewareDrive');
-
+const ServerException = require('../utils/ServerException');
 const router = express.Router();
 
 router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes para Json
 
+
 const criarUmDiretorio = async (nome, pai, drive) => {
-         
-    const response = await drive.files.create({
 
-        resource: {
-            name: nome,
-            mimeType: 'application/vnd.google-apps.folder', 
-            parents: [ pai ]
-        },
+    try {
 
-        fields: 'id', 
-    });
+        const response = await drive.files.create({
+
+            resource: {
+                name: nome,
+                mimeType: 'application/vnd.google-apps.folder', 
+                parents: [ pai ]
+            },
+    
+            fields: 'id', 
+        });   
+
+    } catch (erro) {
+
+        throw new ServerException(erro.message, 500);
+    }
     
     if(response.status == 200) {
         return response.data.id;
     }
-
-    throw new Error(+response.status);
+    
+    throw new ServerException("Erro ao criar questao", 500);
 }
+
 
 const lerVariosDiretorios = async (pai, drive) => {
 
     // Obtém o ID da pasta 
-    const response = await drive.files.list({
-        q: `'${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-        fields: 'files(name, id)',
-        orderBy: 'createdTime asc'
-    });
+    let response;
 
-    if(response.data.files.length == 0) {
+    try {
 
-        throw new Error(400);
+        response = await drive.files.list({
+            q: `'${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+            fields: 'files(name, id)',
+            orderBy: 'createdTime asc'
+        });
+          
+    } catch (erro) {
+        
+        throw new ServerException(erro.message, 500);
     }
+  
+    if(response.data.files.length == 0) {
+        
+        throw new ServerException("Sem diretorios", 400);
+    } 
     
     if(response.status == 200) {
 
@@ -47,19 +65,31 @@ const lerVariosDiretorios = async (pai, drive) => {
         return listaDiretorios;
     } 
 
-    throw new Error(+response.status);
+    throw new ServerException("Erro ao recuperar diretorios", 500);
 }
+
 
 const lerUmDiretorio = async (nome, pai, drive) => {
     // Obtém o ID da pasta 
 
-    const response = await drive.files.list({
-        q: pai ? `name='${nome}' and '${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` : `name='${nome}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-        fields: 'files(id)'
-    });
+    let response;
+
+    try {
+
+        response = await drive.files.list({
+            q: pai ? `name='${nome}' and '${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` : `name='${nome}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+            fields: 'files(id)'
+        });    
+
+    } catch (erro) {
+
+        throw new ServerException(erro.message, 500);
+    }
+    
 
     if(response.data.files.length == 0) {
-        throw new Error(400);
+
+        throw new ServerException("Diretorio Inexistente", 400);
     }
 
     if(response.status == 200) {
@@ -67,8 +97,9 @@ const lerUmDiretorio = async (nome, pai, drive) => {
         return diretorioId;
     } 
 
-    throw new Error(+response.status);
+    throw new ServerException("Erro ao recuperar diretorio", 500);
 }
+
 
 router.post("/criar", async (req, res) => {
     
@@ -80,27 +111,27 @@ router.post("/criar", async (req, res) => {
     
     } catch (erro) {
 
-        res.status(erro.message).send("Erro ao criar diretorio");    
+        res.status(erro.code).send(erro.message);    
     }
     
 });
 
-// Definiçao de rotas (tratamento de erro de funçoes)
 
+// Definiçao de rotas (tratamento de erro de funçoes)
 router.get("/ler", async (req, res) => {
    
     try {
 
         const listaDiretorios = await lerVariosDiretorios(req.query.pai, req.drive);
-
         res.status(200).send(listaDiretorios);
     
    } catch (erro) {
-        
-        res.status(erro.message).send("Erro ao ler diretorios");    
+
+        res.status(erro.code).send(erro.message);   
    }
 
 });
+
 
 router.get("/ler/:nome", async (req, res) => {
    
@@ -111,10 +142,11 @@ router.get("/ler/:nome", async (req, res) => {
     
    } catch (erro) { 
 
-    res.status(erro.message).send("Erro ao ler diretorio ");    
+        res.status(erro.code).send(erro.message);    
    }
 
 });
+
 
 module.exports = {
     router,

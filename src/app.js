@@ -21,10 +21,6 @@ app.use(express.json());
 
 //aplicando o middleware em TODAS as rotas da aplicaçao
 app.use(middlewareAutenticacao);
-
-app.get("/home", (req, res) => {
-    res.send("Home");
-});
  
 //importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
 const rotasAutenticacao = require("./rotas/rotasAutenticacao");
