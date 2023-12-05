@@ -7,12 +7,12 @@ router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes para Json
 
-
 const criarUmDiretorio = async (nome, pai, drive) => {
 
+    let response;
     try {
 
-        const response = await drive.files.create({
+        response = await drive.files.create({
 
             resource: {
                 name: nome,
@@ -36,7 +36,7 @@ const criarUmDiretorio = async (nome, pai, drive) => {
 }
 
 
-const lerVariosDiretorios = async (pai, drive) => {
+const lerVariosDiretorios = async (pai, quantidade, inicial, drive) => {
 
     // Obtém o ID da pasta 
     let response;
@@ -46,7 +46,9 @@ const lerVariosDiretorios = async (pai, drive) => {
         response = await drive.files.list({
             q: `'${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
             fields: 'files(name, id)',
-            orderBy: 'createdTime asc'
+            orderBy: 'createdTime asc',
+            pageSize: quantidade,
+            pageToken: inicial ? undefined : ''
         });
           
     } catch (erro) {
@@ -71,13 +73,13 @@ const lerVariosDiretorios = async (pai, drive) => {
 
 const lerUmDiretorio = async (nome, pai, drive) => {
     // Obtém o ID da pasta 
-
     let response;
 
     try {
 
         response = await drive.files.list({
-            q: pai ? `name='${nome}' and '${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` : `name='${nome}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+            q: pai ? `name='${nome}' and '${pai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` 
+                    : `name='${nome}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
             fields: 'files(id)'
         });    
 
@@ -122,7 +124,11 @@ router.get("/ler", async (req, res) => {
    
     try {
 
-        const listaDiretorios = await lerVariosDiretorios(req.query.pai, req.drive);
+        const listaDiretorios = await lerVariosDiretorios(  req.query.pai, 
+                                                            req.query.quantidade, 
+                                                            req.query.inicial,
+                                                            req.drive
+                                                        );
         res.status(200).send(listaDiretorios);
     
    } catch (erro) {

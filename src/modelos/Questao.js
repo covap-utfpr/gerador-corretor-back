@@ -1,18 +1,12 @@
 class Questao {
     
-    constructor(id, titulo, enunciado, imagem, correta) {
+    constructor(titulo, enunciado, alternativas, imagem, correta) {
 
-        this.id = id;
         this.titulo = titulo;
         this.enunciado = enunciado;
         this.imagem = imagem;
-        this.alternativas = [];
+        this.alternativas = alternativas;
         this.correta = correta;
-    }
-
-    adicionarAlternativa(alternativa) {
-
-        this.alternativas.push(alternativa);
     }
 }
 

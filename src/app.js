@@ -25,14 +25,15 @@ app.use(middlewareAutenticacao);
 //importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
 const rotasAutenticacao = require("./rotas/rotasAutenticacao");
 const rotasDiretorio = require("./rotas/rotasDiretorio");
-// const rotasAtividade = require("./rotas/rotasAtividade");
+const rotasAvaliacao = require("./rotas/rotasAvaliacao");
 const rotasQuestao = require("./rotas/rotasQuestao");
 
 //aplicando as rotas no meu app
 app.use("/", rotasAutenticacao.router);
 app.use("/diretorio", rotasDiretorio.router);
-// app.use("/atividade", rotasAtividade);
+app.use("/avaliacao", rotasAvaliacao.router);
 app.use("/questao", rotasQuestao.router);
+
 //incializando servidor
 app.listen(process.env.PORT, () => {console.log(`Rodando na porta ${process.env.PORT}`)});
 
