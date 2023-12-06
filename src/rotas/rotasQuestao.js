@@ -92,8 +92,18 @@ const lerVariasQuestoes = async (idDisciplina, quantidade, inicial, drive) => {
     
     if(response.status == 200) {
 
-        let listaQuestoes = { idDisciplina:idDisciplina, questoes:response.data.files}
+        let lista = response.data.files.map((questao) => {
+
+            return {
+                nome: questao.name,
+                id: questao.id
+            }
+        });
+
+        let listaQuestoes = { idDisciplina:idDisciplina, questoes:lista}
+
         listaQuestoes = JSON.stringify(listaQuestoes);
+        
         return listaQuestoes;
     } 
 

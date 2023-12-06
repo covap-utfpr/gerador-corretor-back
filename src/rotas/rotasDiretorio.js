@@ -63,7 +63,16 @@ const lerVariosDiretorios = async (pai, quantidade, inicial, drive) => {
     
     if(response.status == 200) {
 
-        const listaDiretorios = JSON.stringify(response.data.files);
+        let listaDiretorios = response.data.files.map((pasta) => {
+
+            return {
+                nome: pasta.name,
+                id: pasta.id
+            }
+        });
+
+        listaDiretorios = JSON.stringify(listaDiretorios);
+
         return listaDiretorios;
     } 
 
