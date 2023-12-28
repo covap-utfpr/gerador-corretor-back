@@ -82,6 +82,7 @@ const lerVariosDiretorios = async (pai, quantidade, inicial, drive) => {
 
 const lerUmDiretorio = async (nome, pai, drive) => {
     // Obtém o ID da pasta 
+
     let response;
 
     try {

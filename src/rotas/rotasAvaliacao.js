@@ -24,10 +24,11 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
         throw new ServerException(erro.message, erro.code);
     }
     //monta objeto questao
-    const avaliacao = new Avaliacao(cabecalho.tipo, cabecalho.titulo, cabecalho.imagem, cabecalho.data, cabecalho.instituicao, questoes);
-    console.log("aqui" + cabecalho.titulo)
+    const avaliacao = new Avaliacao(cabecalho.tipo, cabecalho.titulo, cabecalho.imagem, cabecalho.data, cabecalho.instituicao, cabecalho.instrucoes, questoes);
     //cria arquivo com o id correspondente
-    fs.writeFileSync(avaliacao.titulo, JSON.stringify(avaliacao));
+
+    fs.writeFileSync("1", JSON.stringify(avaliacao));
+
     let response;
 
     try {
@@ -35,13 +36,13 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
         response = await drive.files.create({
 
             resource: {
-                name: `${avaliacao.titulo}`, // Define o nome do arquivo
+                name: `${"1"}`, // Define o nome do arquivo
                 parents: [ idDiretorioAvaliacoes ]
             },
     
             media: {
                 mimeType: 'application/json',
-                body: fs.createReadStream(avaliacao.titulo), // Lê o arquivo local
+                body: fs.createReadStream("1"), // Lê o arquivo local
             },
     
             fields: 'id', // Solicita apenas o ID do novo arquivo
@@ -53,7 +54,7 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
     }
 
     // Exclui o arquivo local após o upload bem-sucedido
-    fs.unlinkSync(avaliacao.titulo);
+    fs.unlinkSync("1");
 
     if(response.status == 200) {
         return response.data.id; 
