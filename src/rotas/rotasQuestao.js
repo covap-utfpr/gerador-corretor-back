@@ -12,23 +12,22 @@ router.use(middlewareDrive);
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
 
-const criarUmaQuestao = async (disciplina, titulo, enunciado, alternativas, imagem, drive) => {
-
+const criarUmaQuestao = async (questao, drive) => {
+    const { idDisciplina, titulo, enunciado, alternativas, imagem, correta } = questao;
+    console.log(questao);
     let idDiretorioQuestoes;
     //obtendo id do diretorio de questoes
     try {
 
-        idDiretorioQuestoes = await lerUmDiretorio("Questoes", disciplina, drive);
+        idDiretorioQuestoes = await lerUmDiretorio("Questoes", idDisciplina, drive);
 
     } catch(erro) {
 
         throw new ServerException(erro.message, erro.code);
     }
-    //monta objeto questao
-    const questao = new Questao(titulo, enunciado, alternativas, imagem);
 
     //cria arquivo com o id correspondente
-    fs.writeFileSync(questao.titulo, JSON.stringify(questao));
+    fs.writeFileSync(titulo, questao);
 
     let response;
    
@@ -37,13 +36,13 @@ const criarUmaQuestao = async (disciplina, titulo, enunciado, alternativas, imag
         response = await drive.files.create({
 
             resource: {
-                name: `${questao.titulo}`, // Define o nome do arquivo
+                name: `${titulo}`, // Define o nome do arquivo
                 parents: [ idDiretorioQuestoes ]
             },
     
             media: {
                 mimeType: 'application/json',
-                body: fs.createReadStream(questao.titulo), // Lê o arquivo local
+                body: fs.createReadStream(titulo), // Lê o arquivo local
             },
     
             fields: 'id', // Solicita apenas o ID do novo arquivo
@@ -55,7 +54,7 @@ const criarUmaQuestao = async (disciplina, titulo, enunciado, alternativas, imag
     }
 
     // Exclui o arquivo local após o upload bem-sucedido
-    fs.unlinkSync(questao.titulo);
+    fs.unlinkSync(titulo);
 
     if(response.status == 200) {
         return response.data.id; 
@@ -68,7 +67,7 @@ const criarUmaQuestao = async (disciplina, titulo, enunciado, alternativas, imag
 const lerVariasQuestoes = async (idDisciplina, quantidade, inicial, drive) => {
 
     const idDiretorioQuestoes = await lerUmDiretorio("Questoes", idDisciplina, drive);
-   
+
     let response;
     
     try {
@@ -84,8 +83,9 @@ const lerVariasQuestoes = async (idDisciplina, quantidade, inicial, drive) => {
     } catch (erro) {
         throw new ServerException(erro.message, 500);
     }
-
+    
     if(response.data.files.length == 0) {
+        
 
         throw new ServerException("Sem questoes", 400);
     } 
@@ -100,10 +100,7 @@ const lerVariasQuestoes = async (idDisciplina, quantidade, inicial, drive) => {
             }
         });
 
-        let listaQuestoes = { idDisciplina:idDisciplina, questoes:lista}
-
-        listaQuestoes = JSON.stringify(listaQuestoes);
-        
+        const listaQuestoes = JSON.stringify(lista);
         return listaQuestoes;
     } 
 
@@ -115,11 +112,7 @@ router.post("/criar",  async (req, res) => {
 
     try {
     
-        const idQuestao = await criarUmaQuestao(    req.body.disciplina, 
-                                                    req.body.titulo, 
-                                                    req.body.enunciado, 
-                                                    req.body.alternativas,
-                                                    req.body.imagem, 
+        const idQuestao = await criarUmaQuestao(    req.body.questao,
                                                     req.drive
                                                 );
 

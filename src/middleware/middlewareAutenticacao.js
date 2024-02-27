@@ -4,7 +4,6 @@ const verificarAutenticacao = (req, res, next) => {
     if (req.path != '/login' && req.path != '/login/callback') { //verificar quaisquer caminhos diferentes de login e login/callback
 
         if(req.headers['authorization']) { //se foi criada a propriedade token, o usuario esta autenticado
-            console.log(req.headers['authorization'])
             next();//prosseguir para a pagina requisitada
             
         } else {
