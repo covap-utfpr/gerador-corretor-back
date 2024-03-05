@@ -11,9 +11,12 @@ router.use(middlewareDrive);
 
 router.use(express.json()); //setando analise de requisiçoes padra Json
 
-const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
+const criarUmaAvaliacao = async (avaliacao, drive) => {
+
+    const { questoes, configuracoes, cabecalho } = avaliacao;
 
     let idDiretorioAvaliacoes;
+
     //obtendo id do diretorio de Avaliacoes
     try {
 
@@ -23,11 +26,10 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
 
         throw new ServerException(erro.message, erro.code);
     }
-    //monta objeto questao
-    const avaliacao = new Avaliacao(cabecalho.tipo, cabecalho.titulo, cabecalho.imagem, cabecalho.data, cabecalho.instituicao, cabecalho.instrucoes, questoes);
+
     //cria arquivo com o id correspondente
 
-    fs.writeFileSync("1", JSON.stringify(avaliacao));
+    fs.writeFileSync(cabecalho.titulo, JSON.stringify(avaliacao));
 
     let response;
 
@@ -36,13 +38,13 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
         response = await drive.files.create({
 
             resource: {
-                name: `${"1"}`, // Define o nome do arquivo
+                name: `${cabecalho.titulo}`, // Define o nome do arquivo
                 parents: [ idDiretorioAvaliacoes ]
             },
     
             media: {
                 mimeType: 'application/json',
-                body: fs.createReadStream("1"), // Lê o arquivo local
+                body: fs.createReadStream(cabecalho.titulo), // Lê o arquivo local
             },
     
             fields: 'id', // Solicita apenas o ID do novo arquivo
@@ -54,7 +56,7 @@ const criarUmaAvaliacao = async (cabecalho, configuracoes, questoes, drive) => {
     }
 
     // Exclui o arquivo local após o upload bem-sucedido
-    fs.unlinkSync("1");
+    fs.unlinkSync(cabecalho.titulo);
 
     if(response.status == 200) {
         return response.data.id; 
@@ -114,9 +116,8 @@ router.post("/criar",  async (req, res) => {
 
     try {
        
-        const idAvaliacao = await criarUmaAvaliacao(    req.body.cabecalho,
-                                                        req.body.configuracoes, 
-                                                        req.body.questoes,
+        const idAvaliacao = await criarUmaAvaliacao(    
+                                                        req.body.avaliacao,
                                                         req.drive
                                                     );
 

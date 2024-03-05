@@ -13,8 +13,9 @@ router.use(express.json()); //setando analise de requisiçoes padra Json
 
 
 const criarUmaQuestao = async (questao, drive) => {
+
     const { idDisciplina, titulo, enunciado, alternativas, imagem, correta } = questao;
-    console.log(questao);
+
     let idDiretorioQuestoes;
     //obtendo id do diretorio de questoes
     try {
@@ -27,7 +28,7 @@ const criarUmaQuestao = async (questao, drive) => {
     }
 
     //cria arquivo com o id correspondente
-    fs.writeFileSync(titulo, questao);
+    fs.writeFileSync(titulo, JSON.stringify(questao));
 
     let response;
    
