@@ -29,7 +29,7 @@ const criarUmaAvaliacao = async (avaliacao, drive) => {
 
     //cria arquivo com o id correspondente
 
-    fs.writeFileSync(cabecalho.titulo, JSON.stringify(avaliacao));
+    fs.writeFileSync(cabecalho.titulo, JSON.stringify(avaliacao, null, '\t' ));
 
     let response;
 

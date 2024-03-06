@@ -28,7 +28,7 @@ const criarUmaQuestao = async (questao, drive) => {
     }
 
     //cria arquivo com o id correspondente
-    fs.writeFileSync(titulo, JSON.stringify(questao));
+    fs.writeFileSync(titulo, JSON.stringify(questao, null, '\t'));
 
     let response;
    
@@ -108,6 +108,30 @@ const lerVariasQuestoes = async (idDisciplina, quantidade, inicial, drive) => {
     throw new ServerException("Erro ao recuperar questoes", 500);
 }
 
+const lerUmaQuestao = async (idQuestao, drive) => {
+
+    let response;
+    
+    try {
+
+        response = await drive.files.get({
+            fileId: idQuestao,
+            alt: 'media',
+            q: `trashed=false`
+        });       
+
+    } catch (erro) {
+
+        throw new ServerException(erro.message, 500);
+    }
+    
+    if(response.status == 200) {
+
+        return response.data;
+    } 
+
+    throw new ServerException("Erro ao recuperar questoes", 500);
+}
 
 router.post("/criar",  async (req, res) => {
 
