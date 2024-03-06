@@ -171,5 +171,6 @@ router.get("/ler",  async (req, res) => {
 module.exports = {
     router, 
     criarUmaQuestao,
-    lerVariasQuestoes
+    lerVariasQuestoes,
+    lerUmaQuestao
 };

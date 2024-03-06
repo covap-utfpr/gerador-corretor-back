@@ -4,6 +4,7 @@ const middlewareDrive = require('../middleware/middlewareDrive');
 const { lerUmDiretorio } = require("./rotasDiretorio");
 const ServerException = require("../utils/ServerException");
 const Avaliacao = require("../modelos/Avaliacao");
+const { lerUmaQuestao } = require("./rotasQuestao");
 
 const router = express.Router();
 
@@ -23,6 +24,21 @@ const criarUmaAvaliacao = async (avaliacao, drive) => {
         idDiretorioAvaliacoes = await lerUmDiretorio("Avaliacoes", cabecalho.disciplina, drive);
 
     } catch(erro) {
+
+        throw new ServerException(erro.message, erro.code);
+    }
+
+    try {
+        
+        const listaQuestoes = await Promise.all(questoes.map( async (questao) => {
+            const questaoRetornada = await lerUmaQuestao(questao.id, drive);
+            return questaoRetornada;
+        }));
+
+        console.log(listaQuestoes)
+        avaliacao.questoes = listaQuestoes;
+
+    } catch (erro) {
 
         throw new ServerException(erro.message, erro.code);
     }
