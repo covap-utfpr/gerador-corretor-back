@@ -82,50 +82,48 @@ const criarUmaAvaliacao = async (avaliacao, drive) => {
 }
 
 
-// const lerVariasAvaliacoes = async (disciplina, diretorioRaiz, drive) => {
+const lerVariasAvaliacoes = async (idDisciplina, quantidade, inicial, drive) => {
 
-//     //obtendo id do diretorio de questoes
-//     let idDisciplina;
+    const idDiretorioAvaliacoes = await lerUmDiretorio("Avaliacoes", idDisciplina, drive);
 
-//     try {
-
-//         idDisciplina = await lerUmDiretorio(disciplina, diretorioRaiz,  drive);  
-
-//     } catch (erro) {
-
-//         throw new ServerException("Diretorio inxistente", 400);
-//     }
-
-//     const idDiretorioQuestoes = await lerUmDiretorio("Questoes", idDisciplina, drive);
-   
-//     let response;
+    let response;
     
-//     try {
+    try {
 
-//         response = await drive.files.list({
-//             q: `'${idDiretorioQuestoes}' in parents and mimeType='application/json' and trashed=false`,
-//             fields: 'files(name, id)',
-//             orderBy: 'createdTime asc'
-//         });  
+        response = await drive.files.list({
+            q: `'${idDiretorioAvaliacoes}' in parents and mimeType='application/json' and trashed=false`,
+            fields: 'files(name, id)', 
+            orderBy: 'createdTime asc',
+            pageSize: quantidade,
+            pageToken: inicial ? undefined : ''
+        });       
 
-//     } catch (erro) {
+    } catch (erro) {
+        throw new ServerException(erro.message, 500);
+    }
+    
+    if(response.data.files.length == 0) {
         
-//         throw new ServerException(erro.message, 500);
-//     }
 
-//     if(response.data.files.length == 0) {
-
-//         throw new ServerException("Sem questoes", 400);
-//     } 
+        throw new ServerException("Sem avaliacoes", 400);
+    } 
     
-//     if(response.status == 200) {
+    if(response.status == 200) {
 
-//         const listaQuestoes = JSON.stringify(response.data.files);
-//         return listaQuestoes;
-//     } 
+        let lista = response.data.files.map((avaliacao) => {
 
-//     throw new ServerException("Erro ao recuperar questoes", 500);
-// }
+            return {
+                nome: avaliacao.name,
+                id: avaliacao.id
+            }
+        });
+
+        const listaAvalicoes = JSON.stringify(lista);
+        return listaAvalicoes;
+    } 
+
+    throw new ServerException("Erro ao recuperar avaliacoes", 500);
+}
 
 
 router.post("/criar",  async (req, res) => {
@@ -145,9 +143,27 @@ router.post("/criar",  async (req, res) => {
     }
 });
 
+router.get("/ler",  async (req, res) => { 
+
+    try {
+        const listaAvalicoes = await lerVariasAvaliacoes(  req.query.idDisciplina, 
+                                                        req.query.quantidade, 
+                                                        req.query.inicial,
+                                                        req.drive
+                                                    );
+
+        res.status(200).send(listaAvalicoes);
+
+    } catch (erro) {
+
+        res.status(erro.code).send(erro.message);
+    }
+});
+
 
 
 module.exports = {
     router, 
     criarUmaAvaliacao,
+    lerVariasAvaliacoes,
 };

@@ -18,3 +18,4 @@ const verificarAutenticacao = (req, res, next) => {
 }
 
 module.exports = verificarAutenticacao;
+
