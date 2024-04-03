@@ -35,7 +35,7 @@ const obterUrlAutorizacao = (req, res) => {
 
 }
 
-const obterCookieToken = async (req,res) => {
+const obterCookieToken = async (req, res) => {
 
     try {
 

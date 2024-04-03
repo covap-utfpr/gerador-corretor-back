@@ -14,8 +14,9 @@ router.use(express.json()); //setando analise de requisiçoes padra Json
 
 const criarUmaAvaliacao = async (avaliacao, drive) => {
 
-    const { questoes, configuracoes, cabecalho } = avaliacao;
+    const { questoes, cabecalho, configuracoes } = avaliacao;
 
+    console.log(avaliacao)
     let idDiretorioAvaliacoes;
 
     //obtendo id do diretorio de Avaliacoes
@@ -31,7 +32,7 @@ const criarUmaAvaliacao = async (avaliacao, drive) => {
     try {
         
         const listaQuestoes = await Promise.all(questoes.map( async (questao) => {
-            const questaoRetornada = await lerUmaQuestao(questao.id, drive);
+            const questaoRetornada = await lerUmaQuestao(questao.idQuestao, drive);
             return questaoRetornada;
         }));
 

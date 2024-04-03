@@ -2,6 +2,13 @@ const dotenv = require("dotenv");
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+//importando middleware de autenticaçao
+const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
+//importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
+const rotasAutenticacao = require("./rotas/rotasAutenticacao");
+const RotasDiretorio = require("./rotas/rotasDiretorio");
+const rotasAvaliacao = require("./rotas/rotasAvaliacao");
+const rotasQuestao = require("./rotas/rotasQuestao");
 
 dotenv.config(); //importando variaveis de ambiente (.env)
 
@@ -13,24 +20,17 @@ app.use(cookieParser());
 //Configurando o CORS para permitir solicitações do front
 app.use(cors());
 
-//importando middleware de autenticaçao
-const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
-
 //lendo todas requisiçoes como json, necessario para middleware de autenticaçao
 app.use(express.json());
 
 //aplicando o middleware em TODAS as rotas da aplicaçao
 app.use(middlewareAutenticacao);
- 
-//importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
-const rotasAutenticacao = require("./rotas/rotasAutenticacao");
-const rotasDiretorio = require("./rotas/rotasDiretorio");
-const rotasAvaliacao = require("./rotas/rotasAvaliacao");
-const rotasQuestao = require("./rotas/rotasQuestao");
+
+const rotasDiretorio = new RotasDiretorio();
 
 //aplicando as rotas no meu app
 app.use("/", rotasAutenticacao.router);
-app.use("/diretorio", rotasDiretorio.router);
+app.use(rotasDiretorio.rotaDiretorio, rotasDiretorio.router);
 app.use("/avaliacao", rotasAvaliacao.router);
 app.use("/questao", rotasQuestao.router);
 
