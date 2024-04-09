@@ -1,16 +1,11 @@
 
 class Avaliacao {
     
-    constructor(tipo, titulo, imagem, data, instituicao, instrucoes, questoes) {
+    constructor(questoes, cabecalho, configuracoes) {
 
-        this.tipo = tipo;
-        this.titulo = titulo;
-        this.imagem = imagem;
-        this.data = data;
-        this.instituicao = instituicao;
-        this.questoes = questoes; 
-        this.instrucoes = instrucoes;
-        this.planilha;
+        this.questoes = questoes;
+        this.cabecalho = cabecalho;
+        this.configuracoes = configuracoes;
     }
 
 }

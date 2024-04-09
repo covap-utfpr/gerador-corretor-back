@@ -1,3 +1,23 @@
+class InterfaceAutenticacao {
+
+    rotaAutenticacao = "/";
+
+    obterUrl = {
+        subrota : '/login',
+        requestType : 'get',
+        localParametros : 'query',
+        parametros: [],
+        funcao : 'obterUrlAutorizacao',
+    }
+
+    obterToken = {
+        subrota : '/login/callback',
+        requestType : 'get',
+        localParametros : 'query',
+        parametros: ['code'],
+        funcao : 'obterCookieToken',
+    }
+}
 
 class InterfaceDiretorio {
     
@@ -38,39 +58,66 @@ class InterfaceDiretorio {
 
 class InterfaceQuestao {
     
-    rotaDiretorio = '/questao';
+    rotaQuestao = '/questao';
     /**
-     * Cria um diretorio no diretorio pai designado
+     * Cria uma questao no diretorio pai designado
     */
     criar = {
         subrota : '/criar',
         requestType : 'post',
         localParametros : 'body',
-        parametros: ['idDisciplina', 'titulo', 'enunciado', 'alternativas', 'imagem', 'correta'],
-        funcao : 'criarUmDiretorio',
+        parametros: ['idDisciplina', 'titulo', 'enunciado', 'alternativas', 'imagem', 'correta', 'drive'],
+        funcao : 'criarUmaQuestao',
     }
 
     /**
-     * Ler uma quantidade de diretorios no diretorio pai designado, partindo de um index inicial 
+     * Ler varias questoes
     */
     ler = {
         subrota : '/ler',
         requestType : 'get',
         localParametros : 'query',
-        parametros: ['IDdiretorioPai', 'quantidade', 'inicial', 'drive'],
-        funcao : 'lerVariosDiretorios',
+        parametros: ['idDisciplina', 'quantidade', 'inicial', 'drive'],
+        funcao : 'lerVariasQuestoes',
     }
     
     /**
-     * Ler um diretorio
+     * Ler uma questao
     */
-    lerUm = {
-        subrota : '/ler/:nome',
+    lerUma = {
+        subrota : '/ler/:id',
         requestType : 'get',
         localParametros : 'query',
-        parametros: ['nome', 'IDdiretorioPai', 'drive'],
-        funcao : 'lerUmDiretorio',
+        parametros: ['idQuestao', 'drive'],
+        funcao : 'lerUmaQuestao',
     }
 }
 
-module.exports = {InterfaceDiretorio, InterfaceQuestao};
+class InterfaceAvaliacao {
+    
+    rotaAvaliacao = '/avaliacao';
+    
+    /**
+     * Cria uma questao no diretorio pai designado
+    */
+    criar = {
+        subrota : '/criar',
+        requestType : 'post',
+        localParametros : 'body',
+        parametros: ['questoes', 'cabecalho', 'configuracoes', 'drive'],
+        funcao : 'criarUmaAvaliacao',
+    }
+
+    /**
+     * Ler varias avaliacoes
+    */
+    ler = {
+        subrota : '/ler',
+        requestType : 'get',
+        localParametros : 'query',
+        parametros: ['idDisciplina', 'quantidade', 'inicial', 'drive'],
+        funcao : 'lerVariasQuestoes',
+    }
+}
+
+module.exports = {InterfaceAutenticacao, InterfaceDiretorio, InterfaceQuestao, InterfaceAvaliacao};

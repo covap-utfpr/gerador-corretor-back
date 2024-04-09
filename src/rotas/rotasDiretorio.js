@@ -37,14 +37,15 @@ class RotasDiretorio extends InterfaceDiretorio {
     
 
         this.router[ler.requestType](ler.subrota,  async (req, res) => {
+
+
             
             try {
-
                 const listaDiretorios = await this.lerVariosDiretorios(
-                                                            req[criar.localParametros][criar.parametros[0]],
-                                                            req[criar.localParametros][criar.parametros[1]], 
-                                                            req[criar.localParametros][criar.parametros[2]], 
-                                                            req[criar.parametros[3]], 
+                                                            req[ler.localParametros][ler.parametros[0]],
+                                                            req[ler.localParametros][ler.parametros[1]], 
+                                                            req[ler.localParametros][ler.parametros[2]], 
+                                                            req[ler.parametros[3]], 
                                                         );
 
                 res.status(200).send(listaDiretorios);
@@ -56,14 +57,13 @@ class RotasDiretorio extends InterfaceDiretorio {
         });
 
         this.router[lerUm.requestType](lerUm.subrota,  async (req, res) => {
-            
+
             try {
 
                 const idDiretorio = await this.lerUmDiretorio(
-                                                            req[criar.localParametros][criar.parametros[0]],
-                                                            req[criar.localParametros][criar.parametros[1]], 
-                                                            req[criar.parametros[2]], 
-                                                            
+                                                            req.params[lerUm.parametros[0]],
+                                                            req[lerUm.localParametros][lerUm.parametros[1]], 
+                                                            req[lerUm.parametros[2]], 
                                                         );
 
                 res.status(200).send(idDiretorio);
@@ -123,6 +123,8 @@ class RotasDiretorio extends InterfaceDiretorio {
             
             throw new ServerException(erro.message, 500);
         }
+
+        console.log(response.data.files)
       
         if(response.data.files.length == 0) {
             
@@ -148,14 +150,14 @@ class RotasDiretorio extends InterfaceDiretorio {
     }
 
     lerUmDiretorio = async (nome, IDdiretorioPai, drive) => {
+        
         // Obtém o ID da pasta 
-    
         let response;
     
         try {
     
             response = await drive.files.list({
-                q: pai ? `name='${nome}' and '${IDdiretorioPai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` 
+                q: IDdiretorioPai ? `name='${nome}' and '${IDdiretorioPai}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false` 
                         : `name='${nome}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
                 fields: 'files(id)'
             });    
@@ -163,8 +165,7 @@ class RotasDiretorio extends InterfaceDiretorio {
         } catch (erro) {
     
             throw new ServerException(erro.message, 500);
-        }
-        
+        }        
     
         if(response.data.files.length == 0) {
     

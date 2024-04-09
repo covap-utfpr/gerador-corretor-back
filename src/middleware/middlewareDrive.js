@@ -9,7 +9,7 @@ const criarObjetoDrive = (req, res, next) => {
     );
 
     let tokens = req.headers['authorization'];
-    
+        
     //cortando caracteres "j:" do token e convertendo em objeto
     tokens = JSON.parse(tokens.slice(2));
 
