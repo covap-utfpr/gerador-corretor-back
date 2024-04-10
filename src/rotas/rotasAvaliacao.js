@@ -140,7 +140,7 @@ class RotasAvaliacao extends InterfaceAvaliacao {
     
     lerVariasAvaliacoes = async (idDisciplina, quantidade, inicial, drive) => {
     
-        const idDiretorioAvaliacoes = await lerUmDiretorio("Avaliacoes", idDisciplina, drive);
+        const idDiretorioAvaliacoes = await this.diretorioObj.lerUmDiretorio("Avaliacoes", idDisciplina, drive);
     
         let response;
         

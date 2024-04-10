@@ -35,7 +35,8 @@ class RotasQuestao extends InterfaceQuestao {
                                                     req[criar.localParametros][criar.parametros[2]],
                                                     req[criar.localParametros][criar.parametros[3]],
                                                     req[criar.localParametros][criar.parametros[4]],
-                                                    req[criar.parametros[5]],
+                                                    req[criar.localParametros][criar.parametros[5]],
+                                                    req[criar.parametros[6]],
                                                 );
         
                 res.status(200).send(idQuestao);
@@ -66,7 +67,7 @@ class RotasQuestao extends InterfaceQuestao {
     }
 
     criarUmaQuestao = async (idDisciplina, titulo, enunciado, alternativas, imagem, correta, drive) => {
-
+  
         const questao = new Questao(titulo,enunciado,alternativas,imagem, correta);
 
         let idDiretorioQuestoes;
