@@ -15,6 +15,7 @@ class RotasDiretorio extends InterfaceDiretorio {
         const criar = this.criar; 
         const ler = this.ler; 
         const lerUm = this.lerUm; 
+        const deletar = this.deletar;
         
         this.router[criar.requestType](criar.subrota, async (req, res) => {
             
@@ -64,6 +65,25 @@ class RotasDiretorio extends InterfaceDiretorio {
                                                             req.params[lerUm.parametros[0]],
                                                             req[lerUm.localParametros][lerUm.parametros[1]], 
                                                             req[lerUm.parametros[2]], 
+                                                        );
+
+                res.status(200).send(idDiretorio);
+
+            } catch (erro) {
+
+                res.status(erro.code).send(erro.message);   
+            }
+           
+        });
+
+        this.router[deletar.requestType](deletar.subrota,  async (req, res) => {
+            
+            try {
+
+                const idDiretorio = await this.deletarUmDiretorio(
+                                                            req.params[deletar.parametros[0]],
+                                                            req[deletar.localParametros][deletar.parametros[1]], 
+                                                            req[deletar.parametros[2]], 
                                                         );
 
                 res.status(200).send(idDiretorio);
@@ -167,6 +187,35 @@ class RotasDiretorio extends InterfaceDiretorio {
             throw new ServerException(erro.message, 500);
         }        
     
+        if(response.data.files.length == 0) {
+    
+            throw new ServerException("Diretorio Inexistente", 400);
+        }
+    
+        if(response.status == 200) {
+            const diretorioId = response.data.files[0].id;
+            return diretorioId;
+        } 
+    
+        throw new ServerException("Erro ao recuperar diretorio", 500);
+    }
+
+    deletarUmDiretorio = async (id, IDdiretorioPai, drive) => {
+        console.log(id)
+        // Obtém o ID da pasta 
+        let response;
+    
+        try {
+    
+            response = await drive.files.delete({
+                fileId: id,
+            });    
+    
+        } catch (erro) {
+            throw new ServerException(erro.message, 500);
+        }        
+
+        console.log(response.data);
         if(response.data.files.length == 0) {
     
             throw new ServerException("Diretorio Inexistente", 400);

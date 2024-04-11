@@ -24,7 +24,7 @@ class RotasQuestao extends InterfaceQuestao {
         const criar = this.criar; 
         const ler = this.ler; 
         const lerUma = this.lerUma; 
-
+        
         this.router[criar.requestType](criar.subrota,  async (req, res) => {
             
             try {

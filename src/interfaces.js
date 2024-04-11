@@ -54,6 +54,17 @@ class InterfaceDiretorio {
         parametros: ['nome', 'IDdiretorioPai', 'drive'],
         funcao : 'lerUmDiretorio',
     }
+
+    /**
+     * Deletar um diretorio
+    */
+    deletar = {
+        subrota : '/deletar/:id',
+        requestType : 'delete',
+        localParametros : 'query',
+        parametros: ['id', 'IDdiretorioPai', 'drive'],
+        funcao : 'deletarUmDiretorio',
+    }
 }
 
 class InterfaceQuestao {
