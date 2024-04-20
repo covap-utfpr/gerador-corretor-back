@@ -37,14 +37,14 @@ class RotasAvaliacao extends InterfaceAvaliacao {
                                                         req[criar.localParametros][criar.parametros[0]],
                                                         req[criar.localParametros][criar.parametros[1]],
                                                         req[criar.localParametros][criar.parametros[2]],
-                                                        req.drive
+                                                        req[criar.parametros[3]],
                                                     );
         
                 res.status(200).send(idAvaliacao);
         
             } catch (erro) {
                 
-                res.status(erro.code).send(erro.message);
+                res.status(erro.status).send(erro.message);
             }
         });
         
@@ -62,7 +62,7 @@ class RotasAvaliacao extends InterfaceAvaliacao {
         
             } catch (erro) {
         
-                res.status(erro.code).send(erro.message);
+                res.status(erro.status).send(erro.message);
             }
         });
         
@@ -98,11 +98,13 @@ class RotasAvaliacao extends InterfaceAvaliacao {
     
             throw new ServerException(erro.message, erro.code);
         }
-    
+
         //cria arquivo com o id correspondente
-    
-        fs.writeFileSync(cabecalho.titulo, JSON.stringify(avaliacao, null, '\t' ));
-    
+
+        const nomeArquivo = cabecalho.titulo.replace(/[^\w\-_.]/g, '');
+
+        fs.writeFileSync(nomeArquivo, JSON.stringify(avaliacao, null, '\t' ));
+
         let response;
     
         try {
@@ -110,25 +112,23 @@ class RotasAvaliacao extends InterfaceAvaliacao {
             response = await drive.files.create({
     
                 resource: {
-                    name: `${cabecalho.titulo}`, // Define o nome do arquivo
+                    name: `${nomeArquivo}`, // Define o nome do arquivo
                     parents: [ idDiretorioAvaliacoes ]
                 },
         
                 media: {
                     mimeType: 'application/json',
-                    body: fs.createReadStream(cabecalho.titulo), // Lê o arquivo local
+                    body: fs.createReadStream(nomeArquivo), // Lê o arquivo local
                 },
         
                 fields: 'id', // Solicita apenas o ID do novo arquivo
             });
     
         } catch (erro) {
-    
             throw new ServerException(erro.message, 500);
         }
-    
         // Exclui o arquivo local após o upload bem-sucedido
-        fs.unlinkSync(cabecalho.titulo);
+        fs.unlinkSync(nomeArquivo);
     
         if(response.status == 200) {
             return response.data.id; 

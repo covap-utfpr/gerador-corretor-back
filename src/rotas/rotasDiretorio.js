@@ -31,7 +31,7 @@ class RotasDiretorio extends InterfaceDiretorio {
             
             } catch (erro) {
         
-                res.status(erro.code).send(erro.message);    
+                res.status(erro.status).send(erro.message);    
             }
             
         });
@@ -53,7 +53,7 @@ class RotasDiretorio extends InterfaceDiretorio {
 
             } catch (erro) {
 
-                res.status(erro.code).send(erro.message);   
+                res.status(erro.status).send(erro.message);   
             }
         });
 
@@ -71,7 +71,7 @@ class RotasDiretorio extends InterfaceDiretorio {
 
             } catch (erro) {
 
-                res.status(erro.code).send(erro.message);   
+                res.status(erro.status).send(erro.message);   
             }
            
         });
@@ -80,13 +80,13 @@ class RotasDiretorio extends InterfaceDiretorio {
             
             try {
 
-                const idDiretorio = await this.deletarUmDiretorio(
-                                                            req.params[deletar.parametros[0]],
-                                                            req[deletar.localParametros][deletar.parametros[1]], 
-                                                            req[deletar.parametros[2]], 
-                                                        );
+                await this.deletarUmDiretorio(
+                                                req.params[deletar.parametros[0]],
+                                                req[deletar.localParametros][deletar.parametros[1]], 
+                                                req[deletar.parametros[2]], 
+                                            );
 
-                res.status(200).send(idDiretorio);
+                res.status(200).send(req.params[deletar.parametros[0]]);
 
             } catch (erro) {
 
@@ -143,8 +143,6 @@ class RotasDiretorio extends InterfaceDiretorio {
             
             throw new ServerException(erro.message, 500);
         }
-
-        console.log(response.data.files)
       
         if(response.data.files.length == 0) {
             
@@ -201,7 +199,7 @@ class RotasDiretorio extends InterfaceDiretorio {
     }
 
     deletarUmDiretorio = async (id, IDdiretorioPai, drive) => {
-        console.log(id)
+
         // Obtém o ID da pasta 
         let response;
     
@@ -210,23 +208,28 @@ class RotasDiretorio extends InterfaceDiretorio {
             response = await drive.files.delete({
                 fileId: id,
             });    
+
+            console.log(response);
     
         } catch (erro) {
-            throw new ServerException(erro.message, 500);
-        }        
 
-        console.log(response.data);
-        if(response.data.files.length == 0) {
+            throw new ServerException(erro.message, 500);
+        }   
+        
+        console.log("passou")
+
+        // console.log(response.data);
+        // if(response.data.files.length == 0) {
     
-            throw new ServerException("Diretorio Inexistente", 400);
-        }
+        //     throw new ServerException("Diretorio Inexistente", 400);
+        // }
     
-        if(response.status == 200) {
-            const diretorioId = response.data.files[0].id;
-            return diretorioId;
-        } 
+        // if(response.status == 200) {
+        //     const diretorioId = response.data.files[0].id;
+        //     return diretorioId;
+        // } 
     
-        throw new ServerException("Erro ao recuperar diretorio", 500);
+        // throw new ServerException("Erro ao recuperar diretorio", 500);
     }
 }
 

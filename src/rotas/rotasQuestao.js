@@ -43,7 +43,7 @@ class RotasQuestao extends InterfaceQuestao {
         
             } catch (erro) {
                 
-                res.status(erro.code).send(erro.message);
+                res.status(erro.status).send(erro.message);
             }
         });
 
@@ -60,8 +60,9 @@ class RotasQuestao extends InterfaceQuestao {
                 res.status(200).send(listaQuestoes);
         
             } catch (erro) {
+                
         
-                res.status(erro.code).send(erro.message);
+                res.status(erro.status).send(erro.message);
             }
         });
     }

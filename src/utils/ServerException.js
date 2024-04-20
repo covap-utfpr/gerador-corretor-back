@@ -1,8 +1,8 @@
 class ServerException extends Error {
   
-  constructor(message, code) {
+  constructor(message, status) {
     super(message); // (1)
-    this.code = code;
+    this.status = status;
   }
 }
 

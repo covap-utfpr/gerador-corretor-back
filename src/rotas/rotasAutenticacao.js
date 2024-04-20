@@ -32,7 +32,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             
             } catch (erro) {
         
-                res.status(erro.code).send(erro.message);    
+                res.status(erro.status).send(erro.message);    
             }
             
         });
