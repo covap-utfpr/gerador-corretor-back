@@ -164,7 +164,7 @@ class RotasQuestao extends InterfaceQuestao {
     }
     
     lerUmaQuestao = async (idQuestao, drive) => {
-    
+        console.log()
         let response;
         
         try {

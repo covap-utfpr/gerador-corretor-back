@@ -86,16 +86,16 @@ class RotasAvaliacao extends InterfaceAvaliacao {
         }
     
         try {
-            
+
             const listaQuestoes = await Promise.all(questoes.map( async (questao) => {
                 const questaoRetornada = await this.questaoObj.lerUmaQuestao(questao.idQuestao, drive);
                 return questaoRetornada;
             }));
     
             avaliacao.questoes = listaQuestoes;
-    
+
         } catch (erro) {
-    
+
             throw new ServerException(erro.message, erro.code);
         }
 
