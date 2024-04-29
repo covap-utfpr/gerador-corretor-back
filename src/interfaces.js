@@ -102,6 +102,17 @@ class InterfaceQuestao {
         parametros: ['idQuestao', 'drive'],
         funcao : 'lerUmaQuestao',
     }
+
+    /**
+     * Deletar uma questão
+    */
+    deletar = {
+        subrota : '/deletar/:id',
+        requestType : 'delete',
+        localParametros : 'query',
+        parametros: ['id', 'IDdiretorioPai', 'drive'],
+        funcao : 'deletarUmaQuestao',
+    }
 }
 
 class InterfaceAvaliacao {
