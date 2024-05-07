@@ -77,7 +77,7 @@ class RotasQuestao extends InterfaceQuestao {
                                                 req[deletar.parametros[2]],  
                 )
         
-                res.status(200).send(listaQuestoes);
+                res.status(200).send(req.params[deletar.parametros[0]]);
         
             } catch (erro) {
                 res.status(erro.status).send(erro.message);
