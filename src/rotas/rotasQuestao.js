@@ -24,6 +24,7 @@ class RotasQuestao extends InterfaceQuestao {
         const criar = this.criar; 
         const ler = this.ler; 
         const lerUma = this.lerUma; 
+        const deletar = this.deletar;
         
         this.router[criar.requestType](criar.subrota,  async (req, res) => {
             
@@ -62,6 +63,23 @@ class RotasQuestao extends InterfaceQuestao {
             } catch (erro) {
                 
         
+                res.status(erro.status).send(erro.message);
+            }
+        });
+
+        this.router[deletar.requestType](deletar.subrota,  async (req, res) => {
+
+            try {
+                
+                await this.deletarUmaQuestao(
+                                                req.params[deletar.parametros[0]],
+                                                req[deletar.localParametros][deletar.parametros[1]], 
+                                                req[deletar.parametros[2]],  
+                )
+        
+                res.status(200).send(req.params[deletar.parametros[0]]);
+        
+            } catch (erro) {
                 res.status(erro.status).send(erro.message);
             }
         });
@@ -186,6 +204,28 @@ class RotasQuestao extends InterfaceQuestao {
         } 
     
         throw new ServerException("Erro ao recuperar questoes", 500);
+    }
+
+    deletarUmaQuestao = async (idQuestao, IDdiretorioPai, drive) => {
+        let response;
+        
+        try {
+    
+            response = await drive.files.delete({
+                fileId: idQuestao,
+            });       
+    
+        } catch (erro) {
+    
+            throw new ServerException(erro.message, 500);
+        }
+        
+        /*if(response.status == 200) {
+    
+            return response.data;
+        } 
+    
+        throw new ServerException("Erro ao recuperar questoes", 500);*/
     }
 }
 
