@@ -140,6 +140,17 @@ class InterfaceAvaliacao {
         parametros: ['idDisciplina', 'quantidade', 'inicial', 'drive'],
         funcao : 'lerVariasQuestoes',
     }
+
+    /**
+     * Deletar uma avaliação
+    */
+    deletar = {
+        subrota : '/deletar/:id',
+        requestType : 'delete',
+        localParametros : 'query',
+        parametros: ['id', 'IDdiretorioPai', 'drive'],
+        funcao : 'deletarUmaAvaliacao',
+    }
 }
 
 module.exports = {InterfaceAutenticacao, InterfaceDiretorio, InterfaceQuestao, InterfaceAvaliacao};

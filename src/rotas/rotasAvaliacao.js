@@ -28,6 +28,7 @@ class RotasAvaliacao extends InterfaceAvaliacao {
         const criar = this.criar; 
         const ler = this.ler; 
         const lerUma = this.lerUma; 
+        const deletar = this.deletar;
 
         this.router[criar.requestType](criar.subrota,  async (req, res) => {
     
@@ -65,7 +66,23 @@ class RotasAvaliacao extends InterfaceAvaliacao {
                 res.status(erro.status).send(erro.message);
             }
         });
+
+        this.router[deletar.requestType](deletar.subrota,  async (req, res) => {
+
+            try {
+                
+                await this.deletarUmaAvaliacao(
+                                                req.params[deletar.parametros[0]],
+                                                req[deletar.localParametros][deletar.parametros[1]], 
+                                                req[deletar.parametros[2]],  
+                )
         
+                res.status(200).send(req.params[deletar.parametros[0]]);
+        
+            } catch (erro) {
+                res.status(erro.status).send(erro.message);
+            }
+        });
 
     }
     
@@ -180,9 +197,23 @@ class RotasAvaliacao extends InterfaceAvaliacao {
     
         throw new ServerException("Erro ao recuperar avaliacoes", 500);
     }
+
+    deletarUmaAvaliacao = async (idAvaliacao, IDdiretorioPai, drive) => {
+        let response;
+        
+        try {
+    
+            response = await drive.files.delete({
+                fileId: idAvaliacao,
+            });       
+    
+        } catch (erro) {
+    
+            throw new ServerException(erro.message, 500);
+        }
+    
+    }
+
 }
-
-
-
 
 module.exports = RotasAvaliacao;

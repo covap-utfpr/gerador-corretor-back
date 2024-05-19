@@ -219,13 +219,6 @@ class RotasQuestao extends InterfaceQuestao {
     
             throw new ServerException(erro.message, 500);
         }
-        
-        /*if(response.status == 200) {
-    
-            return response.data;
-        } 
-    
-        throw new ServerException("Erro ao recuperar questoes", 500);*/
     }
 }
 
