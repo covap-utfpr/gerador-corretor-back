@@ -42,9 +42,9 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             try {
 
                 const tokens = await this.obterCookieToken(req, res);
-        
+
                 res.cookie("token", tokens);  
-                res.status(200).redirect(process.env.FRONT_URL);
+                res.status(200).redirect(`${process.env.FRONT_URL}?login_success`);
             
             } catch (erro) {
         
