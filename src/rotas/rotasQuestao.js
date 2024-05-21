@@ -6,6 +6,7 @@ const { lerUmDiretorio } = require("./rotasDiretorio");
 const ServerException = require("../utils/ServerException");
 const { InterfaceQuestao } = require("../interfaces");
 const RotasDiretorio = require("./rotasDiretorio");
+const deletar = require('../rotas/rotasGerais');
 
 class RotasQuestao extends InterfaceQuestao {
     
@@ -207,25 +208,7 @@ class RotasQuestao extends InterfaceQuestao {
     }
 
     deletarUmaQuestao = async (idQuestao, IDdiretorioPai, drive) => {
-        let response;
-        
-        try {
-    
-            response = await drive.files.delete({
-                fileId: idQuestao,
-            });       
-    
-        } catch (erro) {
-    
-            throw new ServerException(erro.message, 500);
-        }
-        
-        /*if(response.status == 200) {
-    
-            return response.data;
-        } 
-    
-        throw new ServerException("Erro ao recuperar questoes", 500);*/
+        await deletar(idQuestao, IDdiretorioPai, drive);
     }
 }
 

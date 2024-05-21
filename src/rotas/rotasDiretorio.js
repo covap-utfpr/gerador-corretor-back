@@ -2,6 +2,7 @@ const express = require("express");
 const middlewareDrive = require('../middleware/middlewareDrive');
 const ServerException = require('../utils/ServerException');
 const { InterfaceDiretorio } = require("../interfaces");
+const deletar = require('../rotas/rotasGerais');
 class RotasDiretorio extends InterfaceDiretorio {
 
     constructor() {
@@ -199,38 +200,8 @@ class RotasDiretorio extends InterfaceDiretorio {
     }
 
     deletarUmDiretorio = async (id, IDdiretorioPai, drive) => {
-
-        // Obtém o ID da pasta 
-        let response;
-    
-        try {
-    
-            response = await drive.files.delete({
-                fileId: id,
-            });    
-
-            console.log(response);
-    
-        } catch (erro) {
-
-            throw new ServerException(erro.message, 500);
-        }   
-        
-        console.log("passou")
-
-        // console.log(response.data);
-        // if(response.data.files.length == 0) {
-    
-        //     throw new ServerException("Diretorio Inexistente", 400);
-        // }
-    
-        // if(response.status == 200) {
-        //     const diretorioId = response.data.files[0].id;
-        //     return diretorioId;
-        // } 
-    
-        // throw new ServerException("Erro ao recuperar diretorio", 500);
-    }
+        await deletar(id, IDdiretorioPai, drive);
+    };
 }
 
 module.exports = RotasDiretorio;

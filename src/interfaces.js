@@ -17,6 +17,14 @@ class InterfaceAutenticacao {
         parametros: ['code'],
         funcao : 'obterCookieToken',
     }
+
+    revogarToken = {
+        subrota : '/logout',
+        requestType : 'post',
+        localParametros : 'headers',
+        parametros: ['Authorization'],
+        funcao : 'revogarCookieToken',
+    }
 }
 
 class InterfaceDiretorio {
