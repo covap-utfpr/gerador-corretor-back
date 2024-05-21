@@ -2,6 +2,7 @@
 const express = require("express");
 const { google } = require('googleapis');
 const { InterfaceAutenticacao } = require("../interfaces");
+const criarObjetoDrive = require("../middleware/middlewareDrive");
 
 class RotasAutenticacao extends InterfaceAutenticacao {
     
@@ -21,6 +22,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
 
         const obterUrl = this.obterUrl;
         const obterToken = this.obterToken;
+        const revogarToken = this.revogarToken;
 
         this.router[obterUrl.requestType](obterUrl.subrota, (req, res) => {
             
@@ -41,7 +43,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             
             try {
 
-                const tokens = await this.obterCookieToken(req, res);
+                const tokens = await this.obterCookieToken(req[obterToken.localParametros][obterToken.parametros[0]]);
 
                 res.cookie("token", tokens);  
                 res.status(200).redirect(`${process.env.FRONT_URL}?login_success`);
@@ -49,6 +51,21 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             } catch (erro) {
         
                 res.status(500).send("Erro ao autenticar: " + erro.message);
+            }
+            
+        });
+
+        this.router[revogarToken.requestType](revogarToken.subrota, async (req, res) => {
+            
+            try {
+
+                const result = await this.revogarCookieToken(req.headers['authorization']);
+
+                res.status(200).send(result);
+            
+            } catch (erro) {
+        
+                res.status(500).send("Erro ao deslogar: " + erro.message);
             }
             
         });
@@ -73,7 +90,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
 
     }
     
-    obterCookieToken = async (req, res) => {
+    obterCookieToken = async (code) => {
     
         // apos realizar login com google, usuario retorna para esta url que tem 
         //parametros fornecidos pelo google
@@ -81,14 +98,31 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             throw new Error("Cliente oAuth nao foi gerado.");
         }
 
-        const code = req.query.code;
-
         //extraindo token dos parametros enviados
         const { tokens } = await this.oauth2Client.getToken(code);
 
         return tokens;
     }
     
+    revogarCookieToken = async (authToken) => {
+
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.CLIENT_ID,
+            process.env.CLIENT_SECRET,
+            process.env.REDIRECT_URL
+        );
+    
+        let tokens = authToken;
+            
+        //cortando caracteres "j:" do token e convertendo em objeto
+        tokens = JSON.parse(tokens.slice(2));
+    
+        oauth2Client.setCredentials(tokens);
+        
+        await oauth2Client.revokeCredentials();
+
+        return true;
+    }
 }
 
 module.exports = RotasAutenticacao;
