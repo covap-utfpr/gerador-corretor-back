@@ -1,153 +1,167 @@
-class InterfaceAutenticacao {
+class AuthInterface {
 
-    rotaAutenticacao = "/";
+    authRoute = "";
 
-    obterUrl = {
-        subrota : '/login',
+    getUrl = {
+        subroute : '/login',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: [],
-        funcao : 'obterUrlAutorizacao',
+        params: {}
     }
 
-    obterToken = {
-        subrota : '/login/callback',
+    getToken = {
+        subroute : '/login/callback',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['code'],
-        funcao : 'obterCookieToken',
+        params: {
+            query: ['code'],
+        }
     }
 
-    revogarToken = {
-        subrota : '/logout',
+    revogueToken = {
+        subroute : '/logout',
         requestType : 'post',
-        localParametros : 'headers',
-        parametros: ['Authorization'],
-        funcao : 'revogarCookieToken',
+        params: {
+            headers: ['Authorization'],
+        }
     }
 }
 
-class InterfaceDiretorio {
+class DirectoryInterface {
     
-    rotaDiretorio = '/diretorio';
+    directoryRoute = '/diretorio';
+
     /**
      * Cria um diretorio no diretorio pai designado
     */
-    criar = {
-        subrota : '/criar',
+    create = {
+        subroute : '/criar',
         requestType : 'post',
-        localParametros : 'body',
-        parametros: ['nome', 'IDdiretorioPai', 'drive'],
-        funcao : 'criarUmDiretorio',
+        params: {
+            body: ['name', 'parentId'],
+        }
     }
 
     /**
-     * Ler uma quantidade de diretorios no diretorio pai designado, partindo de um index inicial 
+     * Ler uma qnt de diretorios no diretorio pai designado, partindo de um index inicial 
     */
-    ler = {
-        subrota : '/ler',
+    read = {
+        subroute : '/ler',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['IDdiretorioPai', 'quantidade', 'inicial', 'drive'],
-        funcao : 'lerVariosDiretorios',
+        params: {
+            query: ['parentId', 'qnt', 'start'],
+        },
     }
     
     /**
      * Ler um diretorio
     */
-    lerUm = {
-        subrota : '/ler/:nome',
+    readOne = {
+        subroute : '/ler/:name',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['nome', 'IDdiretorioPai', 'drive'],
-        funcao : 'lerUmDiretorio',
+        params: {
+            params: ['name'],
+            query: ['parentId'],
+        },
     }
 
     /**
      * Deletar um diretorio
     */
-    deletar = {
-        subrota : '/deletar/:id',
+    delete = {
+        subroute : '/deletar/:id',
         requestType : 'delete',
-        localParametros : 'query',
-        parametros: ['id', 'IDdiretorioPai', 'drive'],
-        funcao : 'deletarUmDiretorio',
+        params: {
+            params: ['id'],
+            query: ['parentId'],
+        },
     }
 }
 
-class InterfaceQuestao {
+class QuestionInterface {
     
-    rotaQuestao = '/questao';
+    questionRoute = '/questao';
+
     /**
      * Cria uma questao no diretorio pai designado
     */
-    criar = {
-        subrota : '/criar',
+    create = {
+        subroute : '/criar',
         requestType : 'post',
-        localParametros : 'body',
-        parametros: ['idDisciplina', 'titulo', 'enunciado', 'alternativas', 'imagem', 'correta', 'drive'],
-        funcao : 'criarUmaQuestao',
+        params: { 
+            body: [ 'subject', 'title', 'stem', 'alternatives', 'picture', 'correct', 'parent', 'drive' ]
+        },
     }
 
     /**
      * Ler varias questoes
     */
-    ler = {
-        subrota : '/ler',
+    read = {
+        subroute : '/ler',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['idDisciplina', 'quantidade', 'inicial', 'drive'],
-        funcao : 'lerVariasQuestoes',
+        params: {
+            query: ['parentId', 'qnt', 'start'],
+        },    
     }
     
     /**
      * Ler uma questao
     */
-    lerUma = {
-        subrota : '/ler/:id',
+    readOne = {
+        subroute : '/ler/:id',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['idQuestao', 'drive'],
-        funcao : 'lerUmaQuestao',
+        params: {
+            params: ['id'],
+        }, 
+    }
+
+    /**
+     * Editar uma questão
+    */
+    edit = {
+        subroute : '/editar/:id',
+        requestType : 'patch',
+        params: { 
+            body: [ 'subject', 'title', 'stem', 'alternatives', 'picture', 'correct', 'parentId'],
+            params: ['id']
+        },
     }
 
     /**
      * Deletar uma questão
     */
-    deletar = {
-        subrota : '/deletar/:id',
+    delete = {
+        subroute : '/deletar/:id',
         requestType : 'delete',
-        localParametros : 'query',
-        parametros: ['id', 'IDdiretorioPai', 'drive'],
-        funcao : 'deletarUmaQuestao',
+        params: {
+            params: ['id'],
+        }, 
     }
 }
 
-class InterfaceAvaliacao {
+class TestInterface {
     
-    rotaAvaliacao = '/avaliacao';
-    
+    testRoute = '/avaliacao';
+
     /**
      * Cria uma questao no diretorio pai designado
     */
-    criar = {
-        subrota : '/criar',
+    create = {
+        subroute : '/criar',
         requestType : 'post',
-        localParametros : 'body',
-        parametros: ['questoes', 'cabecalho', 'configuracoes', 'drive'],
-        funcao : 'criarUmaAvaliacao',
+        params: {
+            body: ['questions', 'header', 'configs']
+        },
     }
 
     /**
      * Ler varias avaliacoes
     */
-    ler = {
-        subrota : '/ler',
+    read = {
+        subroute : '/ler',
         requestType : 'get',
-        localParametros : 'query',
-        parametros: ['idDisciplina', 'quantidade', 'inicial', 'drive'],
-        funcao : 'lerVariasQuestoes',
+        params: {
+            query: ['parentId', 'qnt', 'start']
+        }
     }
 }
 
-module.exports = {InterfaceAutenticacao, InterfaceDiretorio, InterfaceQuestao, InterfaceAvaliacao};
+module.exports = {AuthInterface, DirectoryInterface, QuestionInterface, TestInterface};

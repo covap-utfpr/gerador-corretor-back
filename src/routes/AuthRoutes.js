@@ -1,10 +1,9 @@
 //Deinindo Endpoints - crud no Drive
 const express = require("express");
 const { google } = require('googleapis');
-const { InterfaceAutenticacao } = require("../interfaces");
-const criarObjetoDrive = require("../middleware/middlewareDrive");
+const { AuthInterface } = require("../interfaces");
 
-class RotasAutenticacao extends InterfaceAutenticacao {
+class AuthRoutes extends AuthInterface {
     
     oauth2Client;
 
@@ -20,15 +19,15 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             process.env.REDIRECT_URL
         );
 
-        const obterUrl = this.obterUrl;
-        const obterToken = this.obterToken;
-        const revogarToken = this.revogarToken;
+        const getUrl = this.getUrl;
+        const getToken = this.getToken;
+        const revogueToken = this.revogueToken;
 
-        this.router[obterUrl.requestType](obterUrl.subrota, (req, res) => {
-            
+        this.router[getUrl.requestType](getUrl.subroute, (req, res) => {
+
             try {
 
-                const url = this.obterUrlAutorizacao();
+                const url = this.getUrlAutorizacao();
 
                 res.status(200).send(url);
             
@@ -39,12 +38,10 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             
         });
 
-        this.router[obterToken.requestType](obterToken.subrota, async (req, res) => {
-            
+        this.router[getToken.requestType](getToken.subroute, async (req, res) => {
+
             try {
-
-                const tokens = await this.obterCookieToken(req[obterToken.localParametros][obterToken.parametros[0]]);
-
+                const tokens = await this.obterCookieToken(req.query.code);
                 res.cookie("token", tokens);  
                 res.status(200).redirect(`${process.env.FRONT_URL}?login_success`);
             
@@ -55,7 +52,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
             
         });
 
-        this.router[revogarToken.requestType](revogarToken.subrota, async (req, res) => {
+        this.router[revogueToken.requestType](revogueToken.subroute, async (req, res) => {
             
             try {
 
@@ -72,7 +69,7 @@ class RotasAutenticacao extends InterfaceAutenticacao {
 
     }
 
-    obterUrlAutorizacao = () => {
+    getUrlAutorizacao = () => {
 
         //definindo escopo de acesso ao drive
         const scopes = [
@@ -91,7 +88,6 @@ class RotasAutenticacao extends InterfaceAutenticacao {
     }
     
     obterCookieToken = async (code) => {
-    
         // apos realizar login com google, usuario retorna para esta url que tem 
         //parametros fornecidos pelo google
         if (!this.oauth2Client) {
@@ -100,7 +96,6 @@ class RotasAutenticacao extends InterfaceAutenticacao {
 
         //extraindo token dos parametros enviados
         const { tokens } = await this.oauth2Client.getToken(code);
-
         return tokens;
     }
     
@@ -125,4 +120,4 @@ class RotasAutenticacao extends InterfaceAutenticacao {
     }
 }
 
-module.exports = RotasAutenticacao;
+module.exports = AuthRoutes;
