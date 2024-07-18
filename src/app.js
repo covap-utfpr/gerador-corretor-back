@@ -5,10 +5,10 @@ const cors = require('cors');
 //importando middleware de autenticaçao
 const middlewareAutenticacao = require("./middleware/middlewareAutenticacao");
 //importando rotas para CRUD: de autenticaçao, de diretorio, de atividade e de questao
-const RotasAutenticacao = require("./rotas/rotasAutenticacao");
-const RotasDiretorio = require("./rotas/rotasDiretorio");
-const RotasAvaliacao = require("./rotas/rotasAvaliacao");
-const RotasQuestao = require("./rotas/rotasQuestao");
+const AuthRoutes = require("./routes/AuthRoutes");
+const DirectoryRoutes = require("./routes/DirectoryRoutes");
+const QuestionRoutes = require("./routes/QuestionRoutes");
+const TestRoutes = require("./routes/TestRoutes");
 
 dotenv.config(); //importando variaveis de ambiente (.env)
 
@@ -26,16 +26,16 @@ app.use(express.json());
 //aplicando o middleware em TODAS as rotas da aplicaçao
 app.use(middlewareAutenticacao);
 
-const rotasAutenticacao = new RotasAutenticacao();
-const rotasDiretorio = new RotasDiretorio();
-const rotasAvaliacao = new RotasAvaliacao();
-const rotasQuestao = new RotasQuestao();
+const authRoutes = new AuthRoutes();
+const directoryRoutes = new DirectoryRoutes();
+const testRoutes = new TestRoutes();
+const questionRoutes = new QuestionRoutes();
 
 //aplicando as rotas no meu app
-app.use(rotasAutenticacao.rotaAutenticacao, rotasAutenticacao.router);
-app.use(rotasDiretorio.rotaDiretorio, rotasDiretorio.router);
-app.use(rotasAvaliacao.rotaAvaliacao, rotasAvaliacao.router);
-app.use(rotasQuestao.rotaQuestao, rotasQuestao.router);
+app.use(authRoutes.authRoute, authRoutes.router);
+app.use(directoryRoutes.directoryRoute, directoryRoutes.router);
+app.use(testRoutes.testRoute, testRoutes.router);
+app.use(questionRoutes.questionRoute, questionRoutes.router);
 
 //incializando servidor
 app.listen(process.env.PORT, () => {console.log(`Rodando na porta ${process.env.PORT}`)});

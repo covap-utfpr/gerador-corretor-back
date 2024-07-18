@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 
-const criarObjetoDrive = (req, res, next) => {
+const createDriveObject = (req, res, next) => {
 
     const oauth2Client = new google.auth.OAuth2(
         process.env.CLIENT_ID,
@@ -22,5 +22,5 @@ const criarObjetoDrive = (req, res, next) => {
     next();
 }
 
-module.exports = criarObjetoDrive;
+module.exports = createDriveObject;
 

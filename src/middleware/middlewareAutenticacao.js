@@ -1,5 +1,5 @@
 //middleware que redireciona usuario para rota de login caso nao esteja autenticado
-const verificarAutenticacao = (req, res, next) => { 
+const verifyAuthentication = (req, res, next) => { 
     
     if (req.path != '/login' && req.path != '/login/callback') { //verificar quaisquer caminhos diferentes de login e login/callback
 
@@ -18,5 +18,5 @@ const verificarAutenticacao = (req, res, next) => {
     }
 }
 
-module.exports = verificarAutenticacao;
+module.exports = verifyAuthentication;
 
