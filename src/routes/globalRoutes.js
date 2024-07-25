@@ -1,6 +1,6 @@
-const deleteOne = async (id, parentId, drive) => {
-
+const deleteOne = async (id, drive) => {
     // Obtém o ID da pasta 
+
     let res;
 
     try {
@@ -8,6 +8,8 @@ const deleteOne = async (id, parentId, drive) => {
         res = await drive.files.delete({
             fileId: id,
         });    
+
+        return id;
 
     } catch (erro) {
 

@@ -71,7 +71,6 @@ class DirectoryInterface {
         requestType : 'delete',
         params: {
             params: ['id'],
-            query: ['parentId'],
         },
     }
 }
@@ -87,7 +86,7 @@ class QuestionInterface {
         subroute : '/criar',
         requestType : 'post',
         params: { 
-            body: [ 'subject', 'title', 'stem', 'alternatives', 'picture', 'correct', 'parent', 'drive' ]
+            body: [ 'subjectId', 'title', 'stem', 'alternatives', 'picture', 'correct' ]
         },
     }
 
@@ -161,6 +160,14 @@ class TestInterface {
         params: {
             query: ['parentId', 'qnt', 'start']
         }
+    }
+
+    delete = {
+        subroute : '/deletar/:id',
+        requestType : 'delete',
+        params: {
+            params: ['id'],
+        }, 
     }
 }
 

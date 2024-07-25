@@ -3,11 +3,11 @@ const { default: TestHeader } = require("./TestHeader");
 
 class Test {
     
-    constructor(title, institution, subject, date, instructions, value, order, answCardPosition, font, fontSize, lines, questions) {
+    constructor(questions, header, configs) {
 
         this.questions = questions;
-        this.header = new TestHeader(title, institution, subject, date, instructions, value);
-        this.configs = new TestConfigs(order, answCardPosition, font, fontSize, lines);
+        this.header = header;
+        this.configs = configs;
     };
 }
 

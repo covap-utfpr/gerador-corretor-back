@@ -6,11 +6,9 @@ const Test = require("../modelos/Test");
 const QuestionRoutes = require("./QuestionRoutes");
 const DirectoryRoutes = require("./DirectoryRoutes");
 const { TestInterface } = require("../interfaces");
+const deleteOne = require("./globalRoutes");
 
 class TestRoutes extends TestInterface {
-
-    questionObj;
-    directoryObj;
 
     constructor() {
         super();
@@ -19,11 +17,9 @@ class TestRoutes extends TestInterface {
         this.router.use(middlewareDrive);
         this.router.use(express.json());
 
-        this.questionObj = new QuestionRoutes();
-        this.directoryObj = new DirectoryRoutes();
-
         this.setupRoute(this.create, this.createTest.bind(this));
         this.setupRoute(this.read, this.readMultipleTests.bind(this));
+        this.setupRoute(this.delete, this.deleteOneTest.bind(this));
     }
 
     setupRoute(routeConfig, handlerFunction) {
@@ -53,21 +49,26 @@ class TestRoutes extends TestInterface {
     }
 
     async createTest(questions, header, configs, drive) {
+
+        let directoryObj = new DirectoryRoutes();
+        let questionObj = new QuestionRoutes();
+
         const test = new Test(questions, header, configs);
-
         let testDirectoryId;
-
         try {
-            testDirectoryId = await this.directoryObj.lerUmDiretorio("Tests", header.subject, drive);
+            testDirectoryId = await directoryObj.readOneDirectory("Avaliacoes", header.subject, drive);
         } catch (error) {
             throw new ServerException(error.message, error.code);
         }
-
+        
         try {
+
             const questionList = await Promise.all(questions.map(async (question) => {
-                const returnedQuestion = await this.questionObj.lerUmaQuestao(question.idQuestion, drive);
+                const returnedQuestion = await questionObj.readOneQuestion(question.questionId, drive);
                 return returnedQuestion;
             }));
+
+            console.log(questionList)
 
             test.questions = questionList;
         } catch (error) {
@@ -139,6 +140,10 @@ class TestRoutes extends TestInterface {
         }
 
         throw new ServerException("Error retrieving tests", 500);
+    }
+
+    async deleteOneTest(id, drive) {
+        return await deleteOne(id, drive);
     }
 }
 
