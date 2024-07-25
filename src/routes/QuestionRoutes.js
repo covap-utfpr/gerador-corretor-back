@@ -18,8 +18,6 @@ class QuestionRoutes extends QuestionInterface {
         this.router.use(middlewareDrive);
         this.router.use(express.json());
 
-        this.directoryObj = new DirectoryRoutes();
-
         this.setupRoute(this.create, this.createOneQuestion);
         this.setupRoute(this.read, this.readMultipleQuestions);
         this.setupRoute(this.readOne, this.readOneQuestion);
@@ -53,14 +51,17 @@ class QuestionRoutes extends QuestionInterface {
         return args;
     }
 
-    async createOneQuestion(subject, title, stem, alternatives, picture, correct, parent, drive) {
-        
-        const question = new Question(title, stem, alternatives, picture, correct);
+    async createOneQuestion(subjectId, title, stem, alternatives, picture, correct, drive) {
+       
+        let directoryObj = new DirectoryRoutes();
+
+        const question = new Question(subjectId, title, stem, alternatives, picture, correct);
 
         let questionDirectoryId;
     
         try {
-            questionDirectoryId = await this.directoryObj.lerUmDiretorio("Questoes", parent, drive);
+            questionDirectoryId = await directoryObj.readOneDirectory("Questoes", subjectId, drive);
+
         } catch (error) {
             throw new ServerException(error.message, error.code);
         }
@@ -95,8 +96,10 @@ class QuestionRoutes extends QuestionInterface {
     }
     
     async readMultipleQuestions(parent, qnt, start, drive) {
-       
-        const questionDirectoryId = await this.directoryObj.lerUmDiretorio("Questoes", parent, drive);
+              
+        let directoryObj = new DirectoryRoutes();
+
+        const questionDirectoryId = await directoryObj.readOneDirectory("Questoes", parent, drive);
 
         let response;
         
@@ -117,12 +120,8 @@ class QuestionRoutes extends QuestionInterface {
         } 
         
         if (response.status == 200) {
-            let list = response.data.files.map((question) => ({
-                name: question.name,
-                id: question.id
-            }));
-    
-            const questionList = JSON.stringify(list);
+
+            const questionList = JSON.stringify(response.data.files);
             return questionList;
         } 
     
@@ -183,7 +182,7 @@ class QuestionRoutes extends QuestionInterface {
     }
 
     async deleteOneQuestion(id, drive) {
-        await deleteOne(id, drive);
+        return await deleteOne(id, drive);
     }
 }
 
